@@ -34,6 +34,20 @@ let zombieDead = false;
 
 const bullets = [];
 
+let playerLives = 3;
+let gameOver = false;
+
+// para evitar daño continuo instantáneo
+let lastHitTime = 0;
+const hitCooldown = 1000; // 1 segundo
+
+let isAttacking = false;
+let attackStartTime = 0;
+const attackDuration = 800; // duración del ataque (ms)
+const attackHitTime = 400; // momento donde golpea
+
+let hasDealtDamage = false;
+
 
 
 
@@ -569,6 +583,11 @@ function teleportPlayerIfOob() {
 
 function animate() {
 
+    if (gameOver) {
+        renderer.render(scene, camera);
+        return;
+    }
+
     checkBulletZombieCollision();
 
     timer.update();
@@ -618,9 +637,79 @@ function updateZombie(deltaTime) {
 
     const distance = zombie.position.distanceTo(playerPos);
 
+    // 🎯 RANGO DE ATAQUE (corto)
+    const attackRange = 2;
+
     const speed = 12;
 
-    // 🧠 SI ESTÁ LEJOS → CORRER
+    // 🏃 SI ESTÁ LEJOS → CORRER
+    if (distance > attackRange && !zombieDead) {
+
+        zombieVelocity.x = direction.x * speed;
+        zombieVelocity.z = direction.z * speed;
+
+        switchAction(runAction);
+
+        isAttacking = false;
+
+    }
+    // 👊 SI ESTÁ CERCA → ATACAR
+    else if (!zombieDead) {
+
+        zombieVelocity.set(0, 0, 0);
+
+        if (!isAttacking) {
+
+            isAttacking = true;
+            attackStartTime = performance.now();
+            hasDealtDamage = false;
+
+            switchAction(attackAction);
+
+        }
+
+    }
+
+    if (isAttacking) {
+
+        const now = performance.now();
+        const elapsed = now - attackStartTime;
+
+        // 💥 momento exacto del golpe
+        if (elapsed > attackHitTime && !hasDealtDamage) {
+
+            const hitRange = 1.8; // rango corto (mano)
+
+            if (distance < hitRange) {
+
+                playerLives--;
+
+                document.getElementById("lives").innerText = "❤️ Vidas: " + playerLives;
+
+                console.log("💥 Golpe!", playerLives);
+
+                if (playerLives <= 0) {
+                    endGame();
+                }
+
+            }
+
+            hasDealtDamage = true;
+
+        }
+
+        // ⏱ terminar ataque
+        if (elapsed > attackDuration) {
+
+            isAttacking = false;
+
+        }
+
+    }
+
+
+
+    /* // 🧠 SI ESTÁ LEJOS → CORRER
     if (distance > 2) {
 
         zombieVelocity.x = direction.x * speed;
@@ -636,7 +725,7 @@ function updateZombie(deltaTime) {
 
         switchAction(attackAction);
 
-    }
+    } */
 
     const deltaPosition = zombieVelocity.clone().multiplyScalar(deltaTime);
     zombieCollider.translate(deltaPosition);
@@ -727,5 +816,16 @@ function respawnZombie() {
     zombie.position.set(x, 0, z);
 
     switchAction(runAction);
+
+}
+
+function endGame() {
+
+    gameOver = true;
+
+    console.log("💀 GAME OVER");
+
+    // detener movimiento del jugador
+    playerVelocity.set(0, 0, 0);
 
 }

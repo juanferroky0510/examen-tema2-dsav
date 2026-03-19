@@ -24,6 +24,9 @@ let runAction;
 let zombieCollider;
 let zombieVelocity = new THREE.Vector3();
 
+let attackAction;
+let currentAction;
+
 
 
 
@@ -481,17 +484,27 @@ fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
 
 
 
+mixer = new THREE.AnimationMixer(zombieModel);
 
-
-    // 🎬 ANIMACIÓN
-    mixer = new THREE.AnimationMixer(zombieModel);
-
+    // 🏃 CORRER
     fbxLoader.load('./models/fbx/Petting Animal.fbx', (anim) => {
 
         const clip = anim.animations[0];
         runAction = mixer.clipAction(clip);
-        runAction.play();
         runAction.timeScale = 3;
+
+        // ▶️ iniciar como acción actual
+        currentAction = runAction;
+        currentAction.play();
+
+    });
+
+    // 👊 ATAQUE
+    fbxLoader.load('./models/fbx/Mutant Punch.fbx', (anim) => {
+
+        const clip = anim.animations[0];
+        attackAction = mixer.clipAction(clip);
+        attackAction.timeScale = 1.5;
 
     });
 
@@ -547,7 +560,7 @@ function animate() {
 
 }
 
-function updateZombie(deltaTime) {
+/* function updateZombie(deltaTime) {
 
     if (!zombie || !zombieCollider) return;
 
@@ -575,6 +588,77 @@ function updateZombie(deltaTime) {
 
     zombie.position.copy(zombieCollider.start);
 
-    zombie.lookAt(playerPos);
+    const target = new THREE.Vector3(playerPos.x, zombie.position.y, playerPos.z);
+    zombie.lookAt(target);
+
+} */
+
+
+function updateZombie(deltaTime) {
+
+    if (!zombie || !zombieCollider) return;
+
+    const playerPos = playerCollider.end;
+
+    const direction = new THREE.Vector3()
+        .subVectors(playerPos, zombieCollider.end);
+
+    direction.y = 0;
+    direction.normalize();
+
+    const distance = zombie.position.distanceTo(playerPos);
+
+    const speed = 12;
+
+    // 🧠 SI ESTÁ LEJOS → CORRER
+    if (distance > 2) {
+
+        zombieVelocity.x = direction.x * speed;
+        zombieVelocity.z = direction.z * speed;
+
+        switchAction(runAction);
+
+    }
+    // 🧠 SI ESTÁ CERCA → ATACAR
+    else {
+
+        zombieVelocity.set(0, 0, 0);
+
+        switchAction(attackAction);
+
+    }
+
+    const deltaPosition = zombieVelocity.clone().multiplyScalar(deltaTime);
+    zombieCollider.translate(deltaPosition);
+
+    const result = worldOctree.capsuleIntersect(zombieCollider);
+
+    if (result) {
+        zombieCollider.translate(result.normal.multiplyScalar(result.depth));
+    }
+
+    zombie.position.copy(zombieCollider.start);
+
+    // 🔥 ROTACIÓN CORREGIDA (IMPORTANTE)
+    const target = new THREE.Vector3(playerPos.x, zombie.position.y, playerPos.z);
+    zombie.lookAt(target);
+
+}
+
+
+
+
+function switchAction(newAction) {
+
+    if (!newAction || currentAction === newAction) return;
+
+    currentAction.fadeOut(0.3);
+
+    newAction
+        .reset()
+        .fadeIn(0.3)
+        .play();
+
+    currentAction = newAction;
 
 }

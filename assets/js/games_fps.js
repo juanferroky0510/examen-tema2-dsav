@@ -28,6 +28,13 @@ let attackAction;
 let currentAction;
 
 
+let dieAction;
+let zombieLife = 5;
+let zombieDead = false;
+
+const bullets = [];
+
+
 
 
 const timer = new THREE.Timer();
@@ -182,6 +189,11 @@ function throwBall() {
 
     sphere.velocity.copy(playerDirection).multiplyScalar(impulse);
     sphere.velocity.addScaledVector(playerVelocity, 2);
+
+    bullets.push({
+        sphere: sphere,
+        time: performance.now()
+    });
 
     sphereIdx = (sphereIdx + 1) % spheres.length;
 
@@ -340,6 +352,22 @@ function updateSpheres(deltaTime) {
 
     }
 
+    const now = performance.now();
+
+    bullets.forEach((b, index) => {
+
+        if (now - b.time > 1000) {
+
+            // desaparecer bala
+            b.sphere.collider.center.set(0, -100, 0);
+            b.sphere.velocity.set(0, 0, 0);
+
+            bullets.splice(index, 1);
+
+        }
+
+    });
+
 }
 
 function getForwardVector() {
@@ -484,7 +512,7 @@ fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
 
 
 
-mixer = new THREE.AnimationMixer(zombieModel);
+    mixer = new THREE.AnimationMixer(zombieModel);
 
     // 🏃 CORRER
     fbxLoader.load('./models/fbx/Petting Animal.fbx', (anim) => {
@@ -504,7 +532,18 @@ mixer = new THREE.AnimationMixer(zombieModel);
 
         const clip = anim.animations[0];
         attackAction = mixer.clipAction(clip);
-        attackAction.timeScale = 1.5;
+        attackAction.timeScale = 5;
+
+    });
+
+    // 💀 MORIR
+    fbxLoader.load('./models/fbx/Dying.fbx', (anim) => {
+
+        const clip = anim.animations[0];
+        dieAction = mixer.clipAction(clip);
+        dieAction.timeScale = 10;
+        dieAction.clampWhenFinished = true;
+        dieAction.loop = THREE.LoopOnce;
 
     });
 
@@ -530,7 +569,10 @@ function teleportPlayerIfOob() {
 
 function animate() {
 
+    checkBulletZombieCollision();
+
     timer.update();
+
 
     const deltaTime = Math.min(0.05, timer.getDelta()) / STEPS_PER_FRAME;
 
@@ -560,41 +602,9 @@ function animate() {
 
 }
 
-/* function updateZombie(deltaTime) {
-
-    if (!zombie || !zombieCollider) return;
-
-    const playerPos = playerCollider.end;
-
-    const direction = new THREE.Vector3()
-        .subVectors(playerPos, zombieCollider.end);
-
-    direction.y = 0;
-    direction.normalize();
-
-    const speed = 12;
-
-    zombieVelocity.x = direction.x * speed;
-    zombieVelocity.z = direction.z * speed;
-
-    const deltaPosition = zombieVelocity.clone().multiplyScalar(deltaTime);
-    zombieCollider.translate(deltaPosition);
-
-    const result = worldOctree.capsuleIntersect(zombieCollider);
-
-    if (result) {
-        zombieCollider.translate(result.normal.multiplyScalar(result.depth));
-    }
-
-    zombie.position.copy(zombieCollider.start);
-
-    const target = new THREE.Vector3(playerPos.x, zombie.position.y, playerPos.z);
-    zombie.lookAt(target);
-
-} */
-
-
 function updateZombie(deltaTime) {
+
+    if (zombieDead) return;
 
     if (!zombie || !zombieCollider) return;
 
@@ -646,8 +656,6 @@ function updateZombie(deltaTime) {
 }
 
 
-
-
 function switchAction(newAction) {
 
     if (!newAction || currentAction === newAction) return;
@@ -660,5 +668,64 @@ function switchAction(newAction) {
         .play();
 
     currentAction = newAction;
+
+}
+
+function checkBulletZombieCollision() {
+
+    if (!zombie || zombieDead) return;
+
+    const zombiePos = zombie.position;
+
+    spheres.forEach((sphere) => {
+
+        const dist = sphere.collider.center.distanceTo(zombiePos);
+
+        if (dist < 1.5) {
+
+            // 💥 impacto
+            sphere.collider.center.set(0, -100, 0);
+            sphere.velocity.set(0, 0, 0);
+
+            zombieLife--;
+
+            console.log("Vida enemigo:", zombieLife);
+
+            if (zombieLife <= 0) {
+                killZombie();
+            }
+
+        }
+
+    });
+
+}
+
+function killZombie() {
+
+    zombieDead = true;
+
+    switchAction(dieAction);
+
+    setTimeout(() => {
+        respawnZombie();
+    }, 3000);
+
+}
+
+function respawnZombie() {
+
+    zombieLife = 5;
+    zombieDead = false;
+
+    const x = (Math.random() - 0.5) * 20;
+    const z = (Math.random() - 0.5) * 20;
+
+    zombieCollider.start.set(x, 0.35, z);
+    zombieCollider.end.set(x, 1.7, z);
+
+    zombie.position.set(x, 0, z);
+
+    switchAction(runAction);
 
 }

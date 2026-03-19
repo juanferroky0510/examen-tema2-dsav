@@ -17,7 +17,12 @@ import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 let zombieModel;
 const fbxLoader = new FBXLoader();
 
+let zombie;
+let mixer;
+let runAction;
 
+let zombieCollider;
+let zombieVelocity = new THREE.Vector3();
 
 
 
@@ -438,10 +443,34 @@ loader.load('scene.gltf', (gltf) => {
 // CARGAR MODELO FBX
 fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
 
-    const zombie = new THREE.Group();
+    zombie = new THREE.Group();
     zombieModel = fbx;
 
-    zombieModel.scale.set(0.01, 0.01, 0.01);
+    zombieModel.scale.setScalar(0.01);
+
+    zombie.add(zombieModel);
+    scene.add(zombie);
+
+    // Posición inicial
+    zombie.position.set(5, 0, 5);
+
+    // Ajustar al suelo
+    zombie.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(zombie);
+    zombie.position.y -= box.min.y;
+
+    zombieCollider = new Capsule(
+        new THREE.Vector3(0, 0.35, 0),
+        new THREE.Vector3(0, 1.7, 0),
+        0.35
+    );
+
+    // colocar collider en misma posición que zombie
+    zombieCollider.start.copy(zombie.position);
+    zombieCollider.end.copy(zombie.position).add(new THREE.Vector3(0, 1.35, 0));
+
+
+
 
     zombieModel.traverse((child) => {
         if (child.isMesh) {
@@ -450,23 +479,21 @@ fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
         }
     });
 
-    zombie.add(zombieModel);
-    scene.add(zombie);
 
-    // 📍 Posición inicial del zombie (en el mundo)
-    zombie.position.set(5, 0, 5);
 
-    // ⚠️ MUY IMPORTANTE: actualizar matrices
-    zombie.updateMatrixWorld(true);
 
-    // 📦 Bounding box REAL en mundo
-    const box = new THREE.Box3().setFromObject(zombie);
 
-    // 🦶 calcular cuánto está flotando
-    const heightOffset = box.min.y;
+    // 🎬 ANIMACIÓN
+    mixer = new THREE.AnimationMixer(zombieModel);
 
-    // 🔻 bajar el modelo hasta el suelo
-    zombie.position.y -= heightOffset;
+    fbxLoader.load('./models/fbx/Petting Animal.fbx', (anim) => {
+
+        const clip = anim.animations[0];
+        runAction = mixer.clipAction(clip);
+        runAction.play();
+        runAction.timeScale = 3;
+
+    });
 
 });
 
@@ -494,8 +521,12 @@ function animate() {
 
     const deltaTime = Math.min(0.05, timer.getDelta()) / STEPS_PER_FRAME;
 
+
+
     // we look for collisions in substeps to mitigate the risk of
     // an object traversing another too quickly for detection.
+
+    if (mixer) mixer.update(deltaTime);
 
     for (let i = 0; i < STEPS_PER_FRAME; i++) {
 
@@ -510,8 +541,40 @@ function animate() {
     }
 
     renderer.render(scene, camera);
+    updateZombie(deltaTime);
 
     stats.update();
 
 }
 
+function updateZombie(deltaTime) {
+
+    if (!zombie || !zombieCollider) return;
+
+    const playerPos = playerCollider.end;
+
+    const direction = new THREE.Vector3()
+        .subVectors(playerPos, zombieCollider.end);
+
+    direction.y = 0;
+    direction.normalize();
+
+    const speed = 12;
+
+    zombieVelocity.x = direction.x * speed;
+    zombieVelocity.z = direction.z * speed;
+
+    const deltaPosition = zombieVelocity.clone().multiplyScalar(deltaTime);
+    zombieCollider.translate(deltaPosition);
+
+    const result = worldOctree.capsuleIntersect(zombieCollider);
+
+    if (result) {
+        zombieCollider.translate(result.normal.multiplyScalar(result.depth));
+    }
+
+    zombie.position.copy(zombieCollider.start);
+
+    zombie.lookAt(playerPos);
+
+}

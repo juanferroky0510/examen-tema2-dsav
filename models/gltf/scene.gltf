@@ -1,0 +1,746 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 2927,
+      "max": [
+        0.9988642334938049,
+        1.0067449808120728,
+        0.9870170950889587
+      ],
+      "min": [
+        -1.0011359453201294,
+        -0.07858828455209732,
+        -1.012982726097107
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 35124,
+      "componentType": 5126,
+      "count": 2927,
+      "max": [
+        0.9921966791152954,
+        1.0,
+        0.992408275604248
+      ],
+      "min": [
+        -0.9924596548080444,
+        -0.998948335647583,
+        -0.9935361742973328
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 2927,
+      "max": [
+        1.0,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.0
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 6129,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 70248,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        8.821001052856445,
+        5.900435447692871,
+        5.17113733291626
+      ],
+      "min": [
+        -6.424603462219238,
+        -3.6022469997406006,
+        -0.16437283158302307
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 856632,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9999779462814331,
+        1.0,
+        0.9999997615814209
+      ],
+      "min": [
+        -0.9999982118606567,
+        -0.9999988079071045,
+        -0.9999998807907104
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 23416,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9984931349754333,
+        0.9936522245407104
+      ],
+      "min": [
+        0.00048828125,
+        0.0014711214462295175
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 547672,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9984931349754333,
+        0.9936522245407104
+      ],
+      "min": [
+        0.00048828125,
+        0.0014711214462295175
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 24516,
+      "componentType": 5125,
+      "count": 280566,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 1643016,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        8.821001052856445,
+        5.179088592529297,
+        5.1941142082214355
+      ],
+      "min": [
+        -8.422867774963379,
+        -5.047872066497803,
+        0.17415472865104675
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 2429400,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9999964237213135,
+        0.9999988675117493,
+        0.9999998211860657
+      ],
+      "min": [
+        -0.9999973773956299,
+        -0.9999999403953552,
+        -0.9999982118606567
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1071928,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9985185265541077,
+        0.9995115995407104
+      ],
+      "min": [
+        0.00048828125,
+        0.0014676643768325448
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1596184,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9985185265541077,
+        0.9995115995407104
+      ],
+      "min": [
+        0.00048828125,
+        0.0014676643768325448
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 1146780,
+      "componentType": 5125,
+      "count": 219903,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 3215784,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        8.821001052856445,
+        5.678801536560059,
+        5.1812005043029785
+      ],
+      "min": [
+        -8.422822952270508,
+        -5.047823429107666,
+        0.0060106124728918076
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 4002168,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9999964237213135,
+        0.9999999403953552,
+        0.9999998807907104
+      ],
+      "min": [
+        -0.9999992847442627,
+        -0.9999975562095642,
+        -0.9999988675117493
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 2120440,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9985180497169495,
+        0.9951170682907104
+      ],
+      "min": [
+        0.00048828125,
+        0.0014780355850234628
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 2644696,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9985180497169495,
+        0.9951170682907104
+      ],
+      "min": [
+        0.00048828125,
+        0.0014780355850234628
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 2026392,
+      "componentType": 5125,
+      "count": 172320,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 4788552,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        8.821000099182129,
+        5.900943756103516,
+        5.173977375030518
+      ],
+      "min": [
+        -7.11984395980835,
+        -3.5363848209381104,
+        -0.2506093382835388
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 5574936,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9999982714653015,
+        0.9999974966049194,
+        0.9999999403953552
+      ],
+      "min": [
+        -0.9999997019767761,
+        -0.9999983310699463,
+        -0.9999997615814209
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 3168952,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9985179901123047,
+        0.9980467557907104
+      ],
+      "min": [
+        0.00048828125,
+        0.0014650417724624276
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 3693208,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9985179901123047,
+        0.9980467557907104
+      ],
+      "min": [
+        0.00048828125,
+        0.0014650417724624276
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 2715672,
+      "componentType": 5125,
+      "count": 192372,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 6361320,
+      "componentType": 5126,
+      "count": 10716,
+      "max": [
+        6.459176540374756,
+        3.6460072994232178,
+        5.15714168548584
+      ],
+      "min": [
+        -0.6473907232284546,
+        -3.402566432952881,
+        0.6129238605499268
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 6489912,
+      "componentType": 5126,
+      "count": 10716,
+      "max": [
+        0.9977161884307861,
+        0.9997740387916565,
+        0.9999994039535522
+      ],
+      "min": [
+        -0.9999997019767761,
+        -0.9995715618133545,
+        -0.9999966621398926
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 4217464,
+      "componentType": 5126,
+      "count": 10716,
+      "max": [
+        0.9985074400901794,
+        0.9863280057907104
+      ],
+      "min": [
+        0.00048828125,
+        0.001467247144319117
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 4303192,
+      "componentType": 5126,
+      "count": 10716,
+      "max": [
+        0.9985074400901794,
+        0.9863280057907104
+      ],
+      "min": [
+        0.00048828125,
+        0.001467247144319117
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 3485160,
+      "componentType": 5125,
+      "count": 21795,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Azad Balabanian (https://sketchfab.com/azadbal)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/soviet-bus-stop-agnavadzor-armenia-57ab7e7190c34d09b950f908050dba85",
+      "title": "Soviet Bus Stop - Agnavadzor, Armenia"
+    },
+    "generator": "Sketchfab-13.29.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 3572340,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 4388920,
+      "byteOffset": 3572340,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 6618504,
+      "byteOffset": 7961260,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 14579764,
+      "uri": "scene.bin"
+    }
+  ],
+  "extensionsUsed": [
+    "KHR_materials_unlit"
+  ],
+  "images": [
+    {
+      "uri": "textures/Material.001_baseColor.jpeg"
+    },
+    {
+      "uri": "textures/Soviet_Bus_Stop_-_Agnavadzor_u1_v1_baseColor.jpeg"
+    }
+  ],
+  "materials": [
+    {
+      "extensions": {
+        "KHR_materials_unlit": {}
+      },
+      "name": "Material.001",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0.0
+      }
+    },
+    {
+      "extensions": {
+        "KHR_materials_unlit": {}
+      },
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_u1_v1",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicFactor": 0.0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Skybox_Material.001_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 4,
+            "TEXCOORD_0": 6,
+            "TEXCOORD_1": 7
+          },
+          "indices": 8,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 10,
+            "POSITION": 9,
+            "TEXCOORD_0": 11,
+            "TEXCOORD_1": 12
+          },
+          "indices": 13,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 15,
+            "POSITION": 14,
+            "TEXCOORD_0": 16,
+            "TEXCOORD_1": 17
+          },
+          "indices": 18,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 20,
+            "POSITION": 19,
+            "TEXCOORD_0": 21,
+            "TEXCOORD_1": 22
+          },
+          "indices": 23,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 25,
+            "POSITION": 24,
+            "TEXCOORD_0": 26,
+            "TEXCOORD_1": 27
+          },
+          "indices": 28,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        0.009999999776482582,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.009999999776482582,
+        0.0,
+        0.0,
+        -0.009999999776482582,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_skybox.fbx"
+    },
+    {
+      "children": [
+        3,
+        5
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "matrix": [
+        3239.7482873355316,
+        0.0004895961653035647,
+        283.44050984895335,
+        0.0,
+        -0.0005339115193806522,
+        3252.12402343742,
+        0.0004851511155159113,
+        0.0,
+        -283.4405098488734,
+        -0.0005298382338560874,
+        3239.748287335532,
+        0.0,
+        -156.69361877441406,
+        65.21186828613281,
+        233.54364013671875,
+        1.0
+      ],
+      "name": "Skybox"
+    },
+    {
+      "mesh": 0,
+      "name": "Skybox_Material.001_0"
+    },
+    {
+      "children": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "matrix": [
+        7.549789959870878e-06,
+        1.1102230246251565e-14,
+        99.99999999999972,
+        0.0,
+        99.99999999999962,
+        -4.371139006309477e-06,
+        -7.549789954319763e-06,
+        0.0,
+        4.371139006309477e-06,
+        99.99999999999991,
+        -3.552713678800501e-13,
+        0.0,
+        28.18903923034668,
+        -160.60504150390625,
+        -16.704614639282227,
+        1.0
+      ],
+      "name": "Soviet_Bus_Stop_-_Agnavadzor"
+    },
+    {
+      "mesh": 1,
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0"
+    },
+    {
+      "mesh": 2,
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0"
+    },
+    {
+      "mesh": 3,
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0"
+    },
+    {
+      "mesh": 4,
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0"
+    },
+    {
+      "mesh": 5,
+      "name": "Soviet_Bus_Stop_-_Agnavadzor_Soviet_Bus_Stop_-_Agnavadzor_u1_v1_0"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    }
+  ]
+}

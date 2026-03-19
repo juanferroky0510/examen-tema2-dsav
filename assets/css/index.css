@@ -1,0 +1,86 @@
+/* Fondo estilo moderno */
+body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Card estilo UIverse */
+.card-ui {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all .3s ease;
+    color: white;
+}
+
+.card-ui:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* iconos grandes */
+.icon-3d {
+    font-size: 45px;
+    margin-bottom: 15px;
+    color: #00d4ff;
+}
+
+.icon-3d-img {
+    width: 60px;
+    height: 60px;
+    display: block;
+    margin: 0 auto 15px auto;
+    object-fit: contain;
+}
+
+/* navbar */
+.navbar {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+/* footer */
+footer {
+    background: #0b0b0b;
+    padding: 20px;
+    margin-top: 60px;
+    text-align: center;
+    color: #ccc;
+}
+
+.hero {
+    padding: 80px 0 40px 0;
+    text-align: center;
+}
+
+.hero h1 {
+    font-weight: 700;
+}
+
+
+/* From Uiverse.io by TCdesign-dev */
+.botonesMenu {
+    padding-left: 33px;
+    padding-right: 33px;
+    padding-bottom: 16px;
+    padding-top: 16px;
+    border-radius: 9px;
+    background: #00d4ff;
+    border: none;
+    font-family: inherit;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.botonesMenu:hover {
+    box-shadow: 7px 5px 56px -14px #07c9ef;
+}
+
+.botonesMenu:active {
+    transform: scale(0.97);
+    box-shadow: 7px 5px 56px -10px #13abc9;
+}

@@ -1,31 +1,81 @@
-/* Fondo estilo moderno */
+/* Fondo estilo espeluznante */
 body {
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    background-color: #0b0b0b;
+    color: #f8f9fa;
+    font-family: 'Cinzel', serif;
     min-height: 100vh;
-    color: white;
-    font-family: 'Segoe UI', sans-serif;
 }
 
-/* Card estilo UIverse */
+/* Hero con fondo tenebroso */
+.hero {
+    text-align: center;
+    padding: 6rem 2rem;
+    background: linear-gradient(rgba(0,0,0,0.8), rgba(20,0,20,0.9)), url('assets/img/spooky-bg.jpg') center/cover no-repeat;
+    color: #f8f9fa;
+    border-bottom: 5px solid #6c0c0c;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    text-shadow: 2px 2px 8px #000;
+    color: #ff4444;
+    font-weight: 700;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: auto;
+}
+
+/* Card estilo espeluznante */
+.card-spooky {
+    background-color: #1a1a1a;
+    border: 2px solid #6c0c0c;
+    color: #f8f9fa;
+    transition: transform 0.3s ease;
+    border-radius: 15px;
+}
+
+.card-spooky:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #6c0c0c;
+}
+
+/* Botón estilo terror */
+.btn-spooky {
+    background-color: #6c0c0c;
+    color: #fff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-spooky:hover {
+    background-color: #a00c0c;
+}
+
+/* Card estilo UIverse (manteniendo pero adaptando colores) */
 .card-ui {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 20px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all .3s ease;
-    color: white;
+    color: #f8f9fa;
 }
 
 .card-ui:hover {
     transform: translateY(-10px) scale(1.03);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 40px rgba(108, 12, 12, 0.6);
 }
 
 /* iconos grandes */
 .icon-3d {
     font-size: 45px;
     margin-bottom: 15px;
-    color: #00d4ff;
+    color: #ff4444;
 }
 
 .icon-3d-img {
@@ -38,7 +88,7 @@ body {
 
 /* navbar */
 .navbar {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
 }
 
@@ -51,36 +101,24 @@ footer {
     color: #ccc;
 }
 
-.hero {
-    padding: 80px 0 40px 0;
-    text-align: center;
-}
-
-.hero h1 {
-    font-weight: 700;
-}
-
-
-/* From Uiverse.io by TCdesign-dev */
+/* Botones menú adaptados */
 .botonesMenu {
-    padding-left: 33px;
-    padding-right: 33px;
-    padding-bottom: 16px;
-    padding-top: 16px;
+    padding: 16px 33px;
     border-radius: 9px;
-    background: #00d4ff;
+    background: #6c0c0c;
     border: none;
     font-family: inherit;
     text-align: center;
     cursor: pointer;
     transition: 0.4s;
+    color: #fff;
 }
 
 .botonesMenu:hover {
-    box-shadow: 7px 5px 56px -14px #07c9ef;
+    box-shadow: 0 0 25px #a00c0c;
 }
 
 .botonesMenu:active {
     transform: scale(0.97);
-    box-shadow: 7px 5px 56px -10px #13abc9;
+    box-shadow: 0 0 25px #ff4444;
 }

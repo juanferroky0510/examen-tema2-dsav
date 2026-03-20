@@ -67,12 +67,13 @@ timer.connect(document);
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x88ccee);
-scene.fog = new THREE.Fog(0x88ccee, 0, 50);
+scene.fog = new THREE.Fog(0x88ccee, 10, 50);
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.rotation.order = 'YXZ';
-
-const fillLight1 = new THREE.HemisphereLight(0x8dc1de, 0x00668d, 1.5);
+/* 
+const fillLight1 = new THREE.HemisphereLight(0x8dc1de, 0x00668d, 1.5); */
+const fillLight1 = new THREE.HemisphereLight(0x223344, 0x000000, 0.3);
 fillLight1.position.set(2, 1, 1);
 scene.add(fillLight1);
 
@@ -218,8 +219,6 @@ function throwBall() {
 
     const sphere = spheres[sphereIdx];
     camera.getWorldDirection(playerDirection);
-
-    /* sphere.collider.center.copy(playerCollider.end).addScaledVector(playerDirection, playerCollider.radius * 1.5); */
 
     const start = new THREE.Vector3();
     camera.getWorldPosition(start);

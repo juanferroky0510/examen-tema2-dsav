@@ -912,7 +912,7 @@ function checkBulletZombieCollision() {
 
                     // 🚀 aumentar dificultad
                     if (score % 5 === 0) {
-                        baseEnemySpeed += 2;
+                        baseEnemySpeed += 5;
                     }
 
                     // 🔄 respawn

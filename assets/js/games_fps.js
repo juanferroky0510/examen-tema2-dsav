@@ -53,6 +53,8 @@ const enemies = [];
 let score = 0;
 let baseEnemySpeed = 5;
 
+const ATTACK_RANGE = 1.8;
+
 
 
 
@@ -104,7 +106,7 @@ container.appendChild(stats.domElement);
 const GRAVITY = 30;
 
 const NUM_SPHERES = 100;
-const SPHERE_RADIUS = 0.2;
+const SPHERE_RADIUS = 0.08;
 
 const STEPS_PER_FRAME = 5;
 
@@ -499,84 +501,6 @@ for (let i = 0; i < 6; i++) {
 
 }
 
-// CARGAR MODELO FBX
-/* fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
-
-    zombie = new THREE.Group();
-    zombieModel = fbx;
-
-    zombieModel.scale.setScalar(0.01);
-
-    zombie.add(zombieModel);
-    scene.add(zombie);
-
-    // Posición inicial
-    zombie.position.set(5, 0, 5);
-
-    // Ajustar al suelo
-    zombie.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(zombie);
-    zombie.position.y -= box.min.y;
-
-    zombieCollider = new Capsule(
-        new THREE.Vector3(0, 0.35, 0),
-        new THREE.Vector3(0, 1.7, 0),
-        0.35
-    );
-
-    // colocar collider en misma posición que zombie
-    zombieCollider.start.copy(zombie.position);
-    zombieCollider.end.copy(zombie.position).add(new THREE.Vector3(0, 1.35, 0));
-
-
-
-
-    zombieModel.traverse((child) => {
-        if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-        }
-    });
-
-
-
-    mixer = new THREE.AnimationMixer(zombieModel);
-
-    // 🏃 CORRER
-    fbxLoader.load('./models/fbx/Petting Animal.fbx', (anim) => {
-
-        const clip = anim.animations[0];
-        runAction = mixer.clipAction(clip);
-        runAction.timeScale = 3;
-
-        // ▶️ iniciar como acción actual
-        currentAction = runAction;
-        currentAction.play();
-
-    });
-
-    // 👊 ATAQUE
-    fbxLoader.load('./models/fbx/Mutant Punch.fbx', (anim) => {
-
-        const clip = anim.animations[0];
-        attackAction = mixer.clipAction(clip);
-        attackAction.timeScale = 5;
-
-    });
-
-    // 💀 MORIR
-    fbxLoader.load('./models/fbx/Dying.fbx', (anim) => {
-
-        const clip = anim.animations[0];
-        dieAction = mixer.clipAction(clip);
-        dieAction.timeScale = 10;
-        dieAction.clampWhenFinished = true;
-        dieAction.loop = THREE.LoopOnce;
-
-    });
-
-}); */
-
 function createEnemy(x, z) {
 
     fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
@@ -590,7 +514,8 @@ function createEnemy(x, z) {
         enemy.group.add(enemy.model);
         scene.add(enemy.group);
 
-        enemy.group.position.set(x, 0, z);
+        const pos = getValidSpawnPosition();
+        enemy.group.position.set(pos.x, 0, pos.z);
 
         // ajustar al suelo
         enemy.group.updateMatrixWorld(true);
@@ -657,15 +582,6 @@ function loadEnemyAnimations(enemy) {
         enemy.actions.attack = action;
     });
 
-    // muerte
-    /* fbxLoader.load('./models/fbx/Dying.fbx', (anim) => {
-        const action = enemy.mixer.clipAction(anim.animations[0]);
-        action.timeScale = 10;
-        action.clampWhenFinished = true;
-        action.loop = THREE.LoopOnce;
-        enemy.actions.die = action;
-    }); */
-
     fbxLoader.load('./models/fbx/Dying.fbx', (anim) => {
 
         const clip = anim.animations[0];
@@ -677,48 +593,12 @@ function loadEnemyAnimations(enemy) {
         action.clampWhenFinished = true;
         action.enabled = true;
 
-        action.timeScale = 5; // prueba con 1.5 primero
+        action.timeScale = 5;
 
         enemy.actions.die = action;
 
     });
 }
-
-/* function switchEnemyAction(enemy, newAction) {
-
-    if (!newAction || enemy.currentAction === newAction) return;
-
-    enemy.currentAction.fadeOut(0.3);
-
-    newAction.reset().fadeIn(0.3).play();
-
-    enemy.currentAction = newAction;
-
-} */
-
-/* function switchEnemyAction(enemy, newAction) {
-
-    if (!newAction || enemy.currentAction === newAction) return;
-
-    // 💀 si está muerto → no permitir cambiar
-    if (enemy.dead && newAction !== enemy.actions.die) return;
-
-    if (enemy.currentAction) {
-        enemy.currentAction.fadeOut(0.2);
-    }
-
-    newAction.reset();
-
-    // saltar ligeramente el inicio (evita T-pose)
-    newAction.time = 0.05;
-
-    newAction
-        .fadeIn(0.2)
-        .play();
-
-    enemy.currentAction = newAction;
-
-} */
 
 function switchEnemyAction(enemy, newAction) {
 
@@ -772,11 +652,6 @@ function animate() {
 
     const deltaTime = Math.min(0.05, timer.getDelta()) / STEPS_PER_FRAME;
 
-
-
-    // we look for collisions in substeps to mitigate the risk of
-    // an object traversing another too quickly for detection.
-
     if (mixer) mixer.update(deltaTime);
 
     for (let i = 0; i < STEPS_PER_FRAME; i++) {
@@ -798,110 +673,6 @@ function animate() {
 
 }
 
-/* function updateZombie(deltaTime) {
-
-    if (zombieDead) return;
-
-    if (!zombie || !zombieCollider) return;
-
-    const playerPos = playerCollider.end;
-
-    const direction = new THREE.Vector3()
-        .subVectors(playerPos, zombieCollider.end);
-
-    direction.y = 0;
-    direction.normalize();
-
-    const distance = zombie.position.distanceTo(playerPos);
-
-    // 🎯 RANGO DE ATAQUE (corto)
-    const attackRange = 2;
-
-    const speed = 12;
-
-    // 🏃 SI ESTÁ LEJOS → CORRER
-    if (distance > attackRange && !zombieDead) {
-
-        zombieVelocity.x = direction.x * speed;
-        zombieVelocity.z = direction.z * speed;
-
-        switchAction(runAction);
-
-        isAttacking = false;
-
-    }
-    // 👊 SI ESTÁ CERCA → ATACAR
-    else if (!zombieDead) {
-
-        zombieVelocity.set(0, 0, 0);
-
-        if (!isAttacking) {
-
-            isAttacking = true;
-            attackStartTime = performance.now();
-            hasDealtDamage = false;
-
-            switchAction(attackAction);
-
-        }
-
-    }
-
-    if (isAttacking) {
-
-        const now = performance.now();
-        const elapsed = now - attackStartTime;
-
-        // 💥 momento exacto del golpe
-        if (elapsed > attackHitTime && !hasDealtDamage) {
-
-            const hitRange = 1.8; // rango corto (mano)
-
-            if (distance < hitRange) {
-
-                playerLives--;
-
-                document.getElementById("lives").innerText = "❤️ Vidas: " + playerLives;
-
-                console.log("💥 Golpe!", playerLives);
-
-                if (playerLives <= 0) {
-                    endGame();
-                }
-
-            }
-
-            hasDealtDamage = true;
-
-        }
-
-        // ⏱ terminar ataque
-        if (elapsed > attackDuration) {
-
-            isAttacking = false;
-
-        }
-
-    }
-
-    const deltaPosition = zombieVelocity.clone().multiplyScalar(deltaTime);
-    zombieCollider.translate(deltaPosition);
-
-    const result = worldOctree.capsuleIntersect(zombieCollider);
-
-    if (result) {
-        zombieCollider.translate(result.normal.multiplyScalar(result.depth));
-    }
-
-    zombie.position.copy(zombieCollider.start);
-
-    // 🔥 ROTACIÓN CORREGIDA (IMPORTANTE)
-    const target = new THREE.Vector3(playerPos.x, zombie.position.y, playerPos.z);
-    zombie.lookAt(target);
-
-} */
-
-
 function updateEnemies(deltaTime) {
 
     enemies.forEach((enemy) => {
@@ -920,11 +691,35 @@ function updateEnemies(deltaTime) {
         direction.normalize();
 
         const distance = enemy.group.position.distanceTo(playerPos);
+        if (enemy.isAttacking) {
+
+            const elapsed = performance.now() - enemy.attackStartTime;
+
+            if (elapsed > 400 && !enemy.hasDealtDamage) {
+
+                const currentDistance = enemy.group.position.distanceTo(playerCollider.end);
+
+                if (currentDistance < ATTACK_RANGE) {
+
+                    playerLives--;
+
+                    document.getElementById("lives").innerText = "❤️ Vidas: " + playerLives;
+
+                    if (playerLives <= 0) endGame();
+                }
+
+                enemy.hasDealtDamage = true;
+            }
+
+            if (elapsed > 800) {
+                enemy.isAttacking = false;
+            }
+        }
 
         const speed = baseEnemySpeed;
 
         // correr
-        if (distance > 2) {
+        if (distance > ATTACK_RANGE) {
 
             enemy.velocity.x = direction.x * speed;
             enemy.velocity.z = direction.z * speed;
@@ -949,13 +744,13 @@ function updateEnemies(deltaTime) {
         }
 
         // daño
-        if (enemy.isAttacking) {
+        /* if (enemy.isAttacking) {
 
             const elapsed = performance.now() - enemy.attackStartTime;
 
             if (elapsed > 400 && !enemy.hasDealtDamage) {
 
-                if (distance < 1.8) {
+                if (distance < ATTACK_RANGE) {
 
                     playerLives--;
                     document.getElementById("lives").innerText = "❤️ Vidas: " + playerLives;
@@ -971,7 +766,53 @@ function updateEnemies(deltaTime) {
                 enemy.isAttacking = false;
             }
 
-        }
+        } */
+
+
+        /*  if (enemy.isAttacking) {
+ 
+             const elapsed = performance.now() - enemy.attackStartTime;
+ 
+             if (elapsed > 400 && !enemy.hasDealtDamage) {
+ 
+                 const currentDistance = enemy.group.position.distanceTo(playerCollider.end);
+ 
+                 if (currentDistance < ATTACK_RANGE) {
+ 
+                     playerLives--;
+ 
+                     document.getElementById("lives").innerText = "❤️ Vidas: " + playerLives;
+ 
+                     if (playerLives <= 0) endGame();
+                 }
+ 
+                 enemy.hasDealtDamage = true;
+             }
+ 
+             if (elapsed > 800) {
+                 enemy.isAttacking = false;
+             }
+         } */
+
+        // 🧱 separación entre enemigos
+        enemies.forEach((other) => {
+
+            if (enemy === other || other.dead) return;
+
+            const dist = enemy.group.position.distanceTo(other.group.position);
+
+            const minDist = 1.0;
+
+            if (dist < minDist) {
+
+                const pushDir = new THREE.Vector3()
+                    .subVectors(enemy.group.position, other.group.position)
+                    .normalize();
+
+                enemy.collider.translate(pushDir.multiplyScalar(0.02));
+            }
+
+        });
 
         // movimiento + colisión
         const deltaPosition = enemy.velocity.clone().multiplyScalar(deltaTime);
@@ -989,23 +830,10 @@ function updateEnemies(deltaTime) {
         const target = new THREE.Vector3(playerPos.x, enemy.group.position.y, playerPos.z);
         enemy.group.lookAt(target);
 
+
     });
 
-}
 
-
-function switchAction(newAction) {
-
-    if (!newAction || currentAction === newAction) return;
-
-    currentAction.fadeOut(0.3);
-
-    newAction
-        .reset()
-        .fadeIn(0.3)
-        .play();
-
-    currentAction = newAction;
 
 }
 
@@ -1019,7 +847,7 @@ function checkBulletZombieCollision() {
 
             const dist = b.sphere.collider.center.distanceTo(enemy.group.position);
 
-            if (dist < 1.2) {
+            if (dist < 0.8) {
 
                 // 💥 eliminar bala
                 b.sphere.collider.center.set(0, -100, 0);
@@ -1068,18 +896,6 @@ function checkBulletZombieCollision() {
 
 }
 
-function killZombie() {
-
-    zombieDead = true;
-
-    switchAction(dieAction);
-
-    setTimeout(() => {
-        respawnZombie();
-    }, 3000);
-
-}
-
 function respawnEnemy(enemy) {
 
     enemy.life = 5;
@@ -1088,10 +904,12 @@ function respawnEnemy(enemy) {
     const x = (Math.random() - 0.5) * 20;
     const z = (Math.random() - 0.5) * 20;
 
-    enemy.collider.start.set(x, 0.35, z);
-    enemy.collider.end.set(x, 1.7, z);
+    const pos = getValidSpawnPosition();
 
-    enemy.group.position.set(x, 0, z);
+    enemy.collider.start.set(pos.x, 0.35, pos.z);
+    enemy.collider.end.set(pos.x, 1.7, pos.z);
+
+    enemy.group.position.set(pos.x, 0, pos.z);
 
     // 🛑 DETENER TODAS LAS ANIMACIONES
     for (const key in enemy.actions) {
@@ -1117,4 +935,31 @@ function endGame() {
     // detener movimiento del jugador
     playerVelocity.set(0, 0, 0);
 
+}
+
+function getValidSpawnPosition() {
+
+    let position;
+    let valid = false;
+
+    while (!valid) {
+
+        const x = (Math.random() - 0.5) * 20;
+        const z = (Math.random() - 0.5) * 20;
+
+        const testCapsule = new Capsule(
+            new THREE.Vector3(x, 0.35, z),
+            new THREE.Vector3(x, 1.7, z),
+            0.35
+        );
+
+        const result = worldOctree.capsuleIntersect(testCapsule);
+
+        if (!result) {
+            position = { x, z };
+            valid = true;
+        }
+    }
+
+    return position;
 }

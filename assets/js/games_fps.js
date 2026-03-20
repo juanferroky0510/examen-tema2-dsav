@@ -61,15 +61,17 @@ let isReloading = false;
 
 let isPaused = false;
 
-const bgMusic = new Audio('sonido-fondo.mp3');
+const bgMusic = new Audio('assets/sounds/sonido-fondo.mp3');
 bgMusic.loop = true;
 bgMusic.volume = 0.5;
 
-const shootSound = new Audio('disparo.mp3');
+const shootSound = new Audio('assets/sounds/disparo.mp3');
 shootSound.volume = 0.7;
 
-const pauseSound = new Audio('pausa.mp3');
-const gameOverSound = new Audio('fin-juego.mp3');
+const pauseSound = new Audio('assets/sounds/pausa.wav');
+const gameOverSound = new Audio('assets/sounds/fin-juego.wav');
+
+const recargaSound = new Audio('assets/sounds/recarga.mp3');
 
 let highScore = localStorage.getItem("highScore") || 0;
 
@@ -190,6 +192,7 @@ document.addEventListener('keydown', (event) => {
 
     // 🔄 RECARGAR
     if (event.code === 'KeyR') {
+        recargaSound.play();
         reload();
     }
 

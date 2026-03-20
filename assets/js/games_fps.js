@@ -48,6 +48,11 @@ const attackHitTime = 400; // momento donde golpea
 
 let hasDealtDamage = false;
 
+const enemies = [];
+
+let score = 0;
+let baseEnemySpeed = 5;
+
 
 
 
@@ -485,8 +490,17 @@ loader.load('scene.gltf', (gltf) => {
 
 });
 
+for (let i = 0; i < 6; i++) {
+
+    const x = (Math.random() - 0.5) * 20;
+    const z = (Math.random() - 0.5) * 20;
+
+    createEnemy(x, z);
+
+}
+
 // CARGAR MODELO FBX
-fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
+/* fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
 
     zombie = new THREE.Group();
     zombieModel = fbx;
@@ -561,9 +575,172 @@ fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
 
     });
 
-});
+}); */
 
+function createEnemy(x, z) {
 
+    fbxLoader.load('./models/fbx/Peasant Girl.fbx', (fbx) => {
+
+        const enemy = {};
+
+        enemy.group = new THREE.Group();
+        enemy.model = fbx;
+
+        enemy.model.scale.setScalar(0.01);
+        enemy.group.add(enemy.model);
+        scene.add(enemy.group);
+
+        enemy.group.position.set(x, 0, z);
+
+        // ajustar al suelo
+        enemy.group.updateMatrixWorld(true);
+        const box = new THREE.Box3().setFromObject(enemy.group);
+        enemy.group.position.y -= box.min.y;
+
+        // collider
+        enemy.collider = new Capsule(
+            new THREE.Vector3(x, 0.35, z),
+            new THREE.Vector3(x, 1.7, z),
+            0.35
+        );
+
+        enemy.velocity = new THREE.Vector3();
+
+        // vida
+        enemy.life = 5;
+        enemy.dead = false;
+
+        // animaciones
+        /* enemy.mixer = new THREE.AnimationMixer(enemy.model); */
+        enemy.mixer = new THREE.AnimationMixer(enemy.model);
+        enemy.actions = {};
+        enemy.currentAction = null;
+
+        // estado ataque
+        enemy.isAttacking = false;
+        enemy.attackStartTime = 0;
+        enemy.hasDealtDamage = false;
+
+        // sombras
+        enemy.model.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+
+        // cargar animaciones
+        loadEnemyAnimations(enemy);
+
+        enemies.push(enemy);
+
+    });
+
+}
+
+function loadEnemyAnimations(enemy) {
+
+    // correr
+    fbxLoader.load('./models/fbx/Petting Animal.fbx', (anim) => {
+        const action = enemy.mixer.clipAction(anim.animations[0]);
+        action.timeScale = 3;
+        enemy.actions.run = action;
+
+        enemy.currentAction = action;
+        action.play();
+    });
+
+    // ataque
+    fbxLoader.load('./models/fbx/Mutant Punch.fbx', (anim) => {
+        const action = enemy.mixer.clipAction(anim.animations[0]);
+        action.timeScale = 5;
+        enemy.actions.attack = action;
+    });
+
+    // muerte
+    /* fbxLoader.load('./models/fbx/Dying.fbx', (anim) => {
+        const action = enemy.mixer.clipAction(anim.animations[0]);
+        action.timeScale = 10;
+        action.clampWhenFinished = true;
+        action.loop = THREE.LoopOnce;
+        enemy.actions.die = action;
+    }); */
+
+    fbxLoader.load('./models/fbx/Dying.fbx', (anim) => {
+
+        const clip = anim.animations[0];
+
+        const action = enemy.mixer.clipAction(clip);
+
+        action.reset();
+        action.setLoop(THREE.LoopOnce);
+        action.clampWhenFinished = true;
+        action.enabled = true;
+
+        action.timeScale = 5; // prueba con 1.5 primero
+
+        enemy.actions.die = action;
+
+    });
+}
+
+/* function switchEnemyAction(enemy, newAction) {
+
+    if (!newAction || enemy.currentAction === newAction) return;
+
+    enemy.currentAction.fadeOut(0.3);
+
+    newAction.reset().fadeIn(0.3).play();
+
+    enemy.currentAction = newAction;
+
+} */
+
+/* function switchEnemyAction(enemy, newAction) {
+
+    if (!newAction || enemy.currentAction === newAction) return;
+
+    // 💀 si está muerto → no permitir cambiar
+    if (enemy.dead && newAction !== enemy.actions.die) return;
+
+    if (enemy.currentAction) {
+        enemy.currentAction.fadeOut(0.2);
+    }
+
+    newAction.reset();
+
+    // saltar ligeramente el inicio (evita T-pose)
+    newAction.time = 0.05;
+
+    newAction
+        .fadeIn(0.2)
+        .play();
+
+    enemy.currentAction = newAction;
+
+} */
+
+function switchEnemyAction(enemy, newAction) {
+
+    if (!newAction || enemy.currentAction === newAction) return;
+
+    if (enemy.dead && newAction !== enemy.actions.die) return;
+
+    if (enemy.currentAction) {
+        enemy.currentAction.fadeOut(0.15); // un poco más suave
+    }
+
+    newAction.reset();
+
+    // 🔥 evitar T-pose
+    newAction.time = 0.05;
+
+    newAction
+        .fadeIn(0.2)
+        .play();
+
+    enemy.currentAction = newAction;
+}
 
 
 function teleportPlayerIfOob() {
@@ -615,13 +792,13 @@ function animate() {
     }
 
     renderer.render(scene, camera);
-    updateZombie(deltaTime);
+    updateEnemies(deltaTime);
 
     stats.update();
 
 }
 
-function updateZombie(deltaTime) {
+/* function updateZombie(deltaTime) {
 
     if (zombieDead) return;
 
@@ -707,26 +884,6 @@ function updateZombie(deltaTime) {
 
     }
 
-
-
-    /* // 🧠 SI ESTÁ LEJOS → CORRER
-    if (distance > 2) {
-
-        zombieVelocity.x = direction.x * speed;
-        zombieVelocity.z = direction.z * speed;
-
-        switchAction(runAction);
-
-    }
-    // 🧠 SI ESTÁ CERCA → ATACAR
-    else {
-
-        zombieVelocity.set(0, 0, 0);
-
-        switchAction(attackAction);
-
-    } */
-
     const deltaPosition = zombieVelocity.clone().multiplyScalar(deltaTime);
     zombieCollider.translate(deltaPosition);
 
@@ -741,6 +898,98 @@ function updateZombie(deltaTime) {
     // 🔥 ROTACIÓN CORREGIDA (IMPORTANTE)
     const target = new THREE.Vector3(playerPos.x, zombie.position.y, playerPos.z);
     zombie.lookAt(target);
+
+} */
+
+
+function updateEnemies(deltaTime) {
+
+    enemies.forEach((enemy) => {
+
+        if (!enemy || !enemy.collider) return;
+
+        enemy.mixer.update(deltaTime);
+        if (enemy.dead) return;
+
+        const playerPos = playerCollider.end;
+
+        const direction = new THREE.Vector3()
+            .subVectors(playerPos, enemy.collider.end);
+
+        direction.y = 0;
+        direction.normalize();
+
+        const distance = enemy.group.position.distanceTo(playerPos);
+
+        const speed = baseEnemySpeed;
+
+        // correr
+        if (distance > 2) {
+
+            enemy.velocity.x = direction.x * speed;
+            enemy.velocity.z = direction.z * speed;
+
+            switchEnemyAction(enemy, enemy.actions.run);
+
+            enemy.isAttacking = false;
+
+        } else {
+
+            enemy.velocity.set(0, 0, 0);
+
+            if (!enemy.isAttacking) {
+
+                enemy.isAttacking = true;
+                enemy.attackStartTime = performance.now();
+                enemy.hasDealtDamage = false;
+
+                switchEnemyAction(enemy, enemy.actions.attack);
+            }
+
+        }
+
+        // daño
+        if (enemy.isAttacking) {
+
+            const elapsed = performance.now() - enemy.attackStartTime;
+
+            if (elapsed > 400 && !enemy.hasDealtDamage) {
+
+                if (distance < 1.8) {
+
+                    playerLives--;
+                    document.getElementById("lives").innerText = "❤️ Vidas: " + playerLives;
+
+                    if (playerLives <= 0) endGame();
+
+                }
+
+                enemy.hasDealtDamage = true;
+            }
+
+            if (elapsed > 800) {
+                enemy.isAttacking = false;
+            }
+
+        }
+
+        // movimiento + colisión
+        const deltaPosition = enemy.velocity.clone().multiplyScalar(deltaTime);
+        enemy.collider.translate(deltaPosition);
+
+        const result = worldOctree.capsuleIntersect(enemy.collider);
+
+        if (result) {
+            enemy.collider.translate(result.normal.multiplyScalar(result.depth));
+        }
+
+        enemy.group.position.copy(enemy.collider.start);
+
+        // rotación sin inclinarse
+        const target = new THREE.Vector3(playerPos.x, enemy.group.position.y, playerPos.z);
+        enemy.group.lookAt(target);
+
+    });
 
 }
 
@@ -762,29 +1011,58 @@ function switchAction(newAction) {
 
 function checkBulletZombieCollision() {
 
-    if (!zombie || zombieDead) return;
+    bullets.forEach((b, bIndex) => {
 
-    const zombiePos = zombie.position;
+        enemies.forEach((enemy) => {
 
-    spheres.forEach((sphere) => {
+            if (!enemy || enemy.dead) return;
 
-        const dist = sphere.collider.center.distanceTo(zombiePos);
+            const dist = b.sphere.collider.center.distanceTo(enemy.group.position);
 
-        if (dist < 1.5) {
+            if (dist < 1.2) {
 
-            // 💥 impacto
-            sphere.collider.center.set(0, -100, 0);
-            sphere.velocity.set(0, 0, 0);
+                // 💥 eliminar bala
+                b.sphere.collider.center.set(0, -100, 0);
+                b.sphere.velocity.set(0, 0, 0);
+                bullets.splice(bIndex, 1);
 
-            zombieLife--;
+                // ❤️ quitar vida al enemigo
+                enemy.life--;
 
-            console.log("Vida enemigo:", zombieLife);
+                console.log("Vida enemigo:", enemy.life);
 
-            if (zombieLife <= 0) {
-                killZombie();
+                // 💀 si muere
+                if (enemy.life <= 0 && !enemy.dead) {
+
+                    enemy.dead = true;
+
+                    // detener otras animaciones
+                    for (const key in enemy.actions) {
+                        if (enemy.actions[key] !== enemy.actions.die) {
+                            enemy.actions[key].stop();
+                        }
+                    }
+
+                    switchEnemyAction(enemy, enemy.actions.die);
+
+                    // 📊 puntaje
+                    score++;
+                    document.getElementById("score").innerText = "Puntaje: " + score;
+
+                    // 🚀 aumentar dificultad
+                    if (score % 5 === 0) {
+                        baseEnemySpeed += 2;
+                    }
+
+                    // 🔄 respawn
+                    setTimeout(() => {
+                        respawnEnemy(enemy);
+                    }, 3000);
+                }
+
             }
 
-        }
+        });
 
     });
 
@@ -802,20 +1080,29 @@ function killZombie() {
 
 }
 
-function respawnZombie() {
+function respawnEnemy(enemy) {
 
-    zombieLife = 5;
-    zombieDead = false;
+    enemy.life = 5;
+    enemy.dead = false;
 
     const x = (Math.random() - 0.5) * 20;
     const z = (Math.random() - 0.5) * 20;
 
-    zombieCollider.start.set(x, 0.35, z);
-    zombieCollider.end.set(x, 1.7, z);
+    enemy.collider.start.set(x, 0.35, z);
+    enemy.collider.end.set(x, 1.7, z);
 
-    zombie.position.set(x, 0, z);
+    enemy.group.position.set(x, 0, z);
 
-    switchAction(runAction);
+    // 🛑 DETENER TODAS LAS ANIMACIONES
+    for (const key in enemy.actions) {
+        enemy.actions[key].stop();
+    }
+
+    // ▶️ volver a correr desde cero
+    const run = enemy.actions.run;
+    run.reset().fadeIn(0.3).play();
+
+    enemy.currentAction = run;
 
 }
 
@@ -824,6 +1111,8 @@ function endGame() {
     gameOver = true;
 
     console.log("💀 GAME OVER");
+
+    document.getElementById("lives").innerText = "💀 GAME OVER";
 
     // detener movimiento del jugador
     playerVelocity.set(0, 0, 0);

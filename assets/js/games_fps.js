@@ -545,14 +545,14 @@ loader.load('scene.gltf', (gltf) => {
     const helper = new OctreeHelper(worldOctree);
     helper.visible = false;
     scene.add(helper);
-
+/*
     const gui = new GUI({ width: 200 });
-    gui.add({ debug: false }, 'debug')
+     gui.add({ debug: false }, 'debug')
         .onChange(function (value) {
 
             helper.visible = value;
 
-        });
+        }); */
 
 });
 

@@ -61,6 +61,18 @@ let isReloading = false;
 
 let isPaused = false;
 
+const bgMusic = new Audio('sonido-fondo.mp3');
+bgMusic.loop = true;
+bgMusic.volume = 0.5;
+
+const shootSound = new Audio('disparo.mp3');
+shootSound.volume = 0.7;
+
+const pauseSound = new Audio('pausa.mp3');
+const gameOverSound = new Audio('fin-juego.mp3');
+
+let highScore = localStorage.getItem("highScore") || 0;
+
 
 
 const timer = new THREE.Timer();
@@ -153,9 +165,15 @@ const vector1 = new THREE.Vector3();
 const vector2 = new THREE.Vector3();
 const vector3 = new THREE.Vector3();
 
+document.getElementById("score").innerText =
+    `🎯 Puntaje: 0 | Record: ${highScore}`;
+
 document.getElementById("btnResume").addEventListener("click", resumeGame);
 document.getElementById("btnRestart").addEventListener("click", restartGame);
 document.getElementById("btnRestart2").addEventListener("click", restartGame);
+
+document.getElementById("btnSalir").addEventListener("click", exitGame);
+document.getElementById("btnSalir2").addEventListener("click", exitGame);
 
 
 document.addEventListener('pointerlockchange', () => {
@@ -193,6 +211,11 @@ document.addEventListener('keyup', (event) => {
 container.addEventListener('mousedown', () => {
 
     document.body.requestPointerLock();
+
+    // ▶️ iniciar música si no está sonando
+    if (bgMusic.paused) {
+        bgMusic.play();
+    }
 
     mouseTime = performance.now();
 
@@ -253,6 +276,9 @@ function throwBall() {
     });
 
     sphereIdx = (sphereIdx + 1) % spheres.length;
+
+    shootSound.currentTime = 0;
+    shootSound.play();
 
     currentAmmo--;
     updateAmmoUI();
@@ -869,7 +895,17 @@ function checkBulletZombieCollision() {
 
                     // 📊 puntaje
                     score++;
-                    document.getElementById("score").innerText = "Puntaje: " + score;
+                    let isNewRecord = false;
+
+                    if (score > highScore) {
+                        highScore = score;
+                        localStorage.setItem("highScore", highScore);
+                        isNewRecord = true;
+                    }
+                    document.getElementById("score").innerText =
+                        isNewRecord
+                            ? `🎯 Puntaje: ${score} 🏆 NUEVO RECORD!`
+                            : `🎯 Puntaje: ${score} | Record: ${highScore}`;
 
                     // 🚀 aumentar dificultad
                     if (score % 5 === 0) {
@@ -929,6 +965,8 @@ function endGame() {
 
     // detener movimiento del jugador
     playerVelocity.set(0, 0, 0);
+    gameOverSound.currentTime = 0;
+    gameOverSound.play();
 
 }
 
@@ -1027,6 +1065,8 @@ function pauseGame() {
     isPaused = true;
 
     document.getElementById("pauseMenu").style.display = "flex";
+    pauseSound.currentTime = 0;
+    pauseSound.play();
 
 }
 
@@ -1043,3 +1083,10 @@ function resumeGame() {
 function restartGame() {
     location.reload();
 }
+
+function exitGame() {
+    window.location.href = "index.html";
+}
+
+// hacerlo global
+window.exitGame = exitGame;

@@ -72,6 +72,46 @@
 
 	<div id="container"></div>
 
+	<div id="pauseMenu" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.7);
+    flex-direction: column;
+    z-index: 999;
+">
+
+		<h1 style="color: white;">⏸ Juego Pausado</h1>
+
+		<button id="btnResume">▶ Continuar</button>
+		<button id="btnRestart">🔄 Reiniciar</button>
+
+	</div>
+
+	<div id="gameTerminateMenu" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.7);
+    flex-direction: column;
+    z-index: 999;
+">
+
+		<h1 style="color: white;">FIN DEL JUEGO</h1>
+		<button id="btnRestart2">🔄 Reiniciar</button>
+
+	</div>
+
 	<!-- 🎯 Mira -->
 	<div id="crosshair" style="
 position: absolute;

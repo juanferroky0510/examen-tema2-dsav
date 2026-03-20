@@ -34,7 +34,7 @@ let zombieDead = false;
 
 const bullets = [];
 
-let playerLives = 3;
+let playerLives = 10;
 let gameOver = false;
 
 // para evitar daño continuo instantáneo
@@ -59,6 +59,7 @@ let maxAmmo = 7;
 let currentAmmo = 7;
 let isReloading = false;
 
+let isPaused = false;
 
 
 
@@ -71,9 +72,8 @@ scene.fog = new THREE.Fog(0x88ccee, 10, 50);
 
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.rotation.order = 'YXZ';
-/* 
-const fillLight1 = new THREE.HemisphereLight(0x8dc1de, 0x00668d, 1.5); */
-const fillLight1 = new THREE.HemisphereLight(0x223344, 0x000000, 0.3);
+
+const fillLight1 = new THREE.HemisphereLight(0x8dc1de, 0x00668d, 1.5);
 fillLight1.position.set(2, 1, 1);
 scene.add(fillLight1);
 
@@ -152,6 +152,19 @@ const keyStates = {};
 const vector1 = new THREE.Vector3();
 const vector2 = new THREE.Vector3();
 const vector3 = new THREE.Vector3();
+
+document.getElementById("btnResume").addEventListener("click", resumeGame);
+document.getElementById("btnRestart").addEventListener("click", restartGame);
+document.getElementById("btnRestart2").addEventListener("click", restartGame);
+
+
+document.addEventListener('pointerlockchange', () => {
+
+    if (document.pointerLockElement === null) {
+        pauseGame();
+    }
+
+});
 
 document.addEventListener('keydown', (event) => {
 
@@ -291,6 +304,11 @@ function updatePlayer(deltaTime) {
     playerCollider.translate(deltaPosition);
 
     playerCollisions();
+    enemies.forEach(enemy => {
+        if (enemy && !enemy.dead) {
+            playerEnemyCollision(enemy);
+        }
+    });
 
     camera.position.copy(playerCollider.end);
 
@@ -666,7 +684,7 @@ function teleportPlayerIfOob() {
 
 function animate() {
 
-    if (gameOver) {
+    if (gameOver || isPaused) {
         renderer.render(scene, camera);
         return;
     }
@@ -676,7 +694,7 @@ function animate() {
     timer.update();
 
 
-    const deltaTime = Math.min(0.05, timer.getDelta()) / STEPS_PER_FRAME;
+    const deltaTime = Math.min(0.03, timer.getDelta()) / STEPS_PER_FRAME;
 
     if (mixer) mixer.update(deltaTime);
 
@@ -799,12 +817,13 @@ function updateEnemies(deltaTime) {
             enemy.collider.translate(result.normal.multiplyScalar(result.depth));
         }
 
+
+
         enemy.group.position.copy(enemy.collider.start);
 
         // rotación sin inclinarse
         const target = new THREE.Vector3(playerPos.x, enemy.group.position.y, playerPos.z);
         enemy.group.lookAt(target);
-
 
     });
 
@@ -903,9 +922,10 @@ function endGame() {
 
     gameOver = true;
 
-    console.log("💀 GAME OVER");
-
     document.getElementById("lives").innerText = "💀 GAME OVER";
+    document.getElementById("gameTerminateMenu").style.display = "flex";
+    // 🔓 liberar mouse
+    document.exitPointerLock();
 
     // detener movimiento del jugador
     playerVelocity.set(0, 0, 0);
@@ -964,4 +984,62 @@ function reload() {
 
     }, 1500); // tiempo de recarga (1.5s)
 
+}
+
+function playerEnemyCollision(enemy) {
+
+    const playerCenter = new THREE.Vector3()
+        .addVectors(playerCollider.start, playerCollider.end)
+        .multiplyScalar(0.5);
+
+    const enemyCenter = new THREE.Vector3()
+        .addVectors(enemy.collider.start, enemy.collider.end)
+        .multiplyScalar(0.5);
+
+    const distance = playerCenter.distanceTo(enemyCenter);
+    const minDistance = playerCollider.radius + enemy.collider.radius;
+
+    if (distance < minDistance) {
+
+        const normal = new THREE.Vector3()
+            .subVectors(playerCenter, enemyCenter)
+            .normalize();
+
+        // 🔴 1. CANCELAR VELOCIDAD HACIA EL ENEMIGO
+        const velocityDot = playerVelocity.dot(normal);
+
+        if (velocityDot < 0) {
+            playerVelocity.addScaledVector(normal, -velocityDot);
+        }
+
+        // 🔴 2. SEPARAR (corrección de penetración)
+        const penetration = Math.min(0.2, minDistance - distance);
+
+        playerCollider.translate(normal.clone().multiplyScalar(penetration));
+
+    }
+}
+
+function pauseGame() {
+
+    if (gameOver) return;
+
+    isPaused = true;
+
+    document.getElementById("pauseMenu").style.display = "flex";
+
+}
+
+function resumeGame() {
+
+    isPaused = false;
+
+    document.getElementById("pauseMenu").style.display = "none";
+
+    document.body.requestPointerLock(); // volver a jugar
+
+}
+
+function restartGame() {
+    location.reload();
 }

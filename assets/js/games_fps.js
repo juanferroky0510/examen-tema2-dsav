@@ -743,57 +743,6 @@ function updateEnemies(deltaTime) {
 
         }
 
-        // daño
-        /* if (enemy.isAttacking) {
-
-            const elapsed = performance.now() - enemy.attackStartTime;
-
-            if (elapsed > 400 && !enemy.hasDealtDamage) {
-
-                if (distance < ATTACK_RANGE) {
-
-                    playerLives--;
-                    document.getElementById("lives").innerText = "❤️ Vidas: " + playerLives;
-
-                    if (playerLives <= 0) endGame();
-
-                }
-
-                enemy.hasDealtDamage = true;
-            }
-
-            if (elapsed > 800) {
-                enemy.isAttacking = false;
-            }
-
-        } */
-
-
-        /*  if (enemy.isAttacking) {
- 
-             const elapsed = performance.now() - enemy.attackStartTime;
- 
-             if (elapsed > 400 && !enemy.hasDealtDamage) {
- 
-                 const currentDistance = enemy.group.position.distanceTo(playerCollider.end);
- 
-                 if (currentDistance < ATTACK_RANGE) {
- 
-                     playerLives--;
- 
-                     document.getElementById("lives").innerText = "❤️ Vidas: " + playerLives;
- 
-                     if (playerLives <= 0) endGame();
-                 }
- 
-                 enemy.hasDealtDamage = true;
-             }
- 
-             if (elapsed > 800) {
-                 enemy.isAttacking = false;
-             }
-         } */
-
         // 🧱 separación entre enemigos
         enemies.forEach((other) => {
 
@@ -845,9 +794,9 @@ function checkBulletZombieCollision() {
 
             if (!enemy || enemy.dead) return;
 
-            const dist = b.sphere.collider.center.distanceTo(enemy.group.position);
+            const box = new THREE.Box3().setFromObject(enemy.model);
 
-            if (dist < 0.8) {
+            if (box.containsPoint(b.sphere.collider.center)) {
 
                 // 💥 eliminar bala
                 b.sphere.collider.center.set(0, -100, 0);

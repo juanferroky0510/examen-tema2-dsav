@@ -55,6 +55,10 @@ let baseEnemySpeed = 5;
 
 const ATTACK_RANGE = 1.8;
 
+let maxAmmo = 7;
+let currentAmmo = 7;
+let isReloading = false;
+
 
 
 
@@ -152,6 +156,18 @@ document.addEventListener('keydown', (event) => {
 
     keyStates[event.code] = true;
 
+    // 🔄 RECARGAR
+    if (event.code === 'KeyR') {
+        reload();
+    }
+
+});
+
+
+document.addEventListener('keydown', (event) => {
+
+    keyStates[event.code] = true;
+
 });
 
 document.addEventListener('keyup', (event) => {
@@ -198,11 +214,19 @@ function onWindowResize() {
 
 function throwBall() {
 
-    const sphere = spheres[sphereIdx];
+    if (currentAmmo <= 0 || isReloading) return;
 
+    const sphere = spheres[sphereIdx];
     camera.getWorldDirection(playerDirection);
 
-    sphere.collider.center.copy(playerCollider.end).addScaledVector(playerDirection, playerCollider.radius * 1.5);
+    /* sphere.collider.center.copy(playerCollider.end).addScaledVector(playerDirection, playerCollider.radius * 1.5); */
+
+    const start = new THREE.Vector3();
+    camera.getWorldPosition(start);
+
+    sphere.collider.center.copy(start);
+
+    sphere.collider.center.addScaledVector(playerDirection, 0.5);
 
     // throw the ball with more force if we hold the button longer, and if we move forward
 
@@ -217,6 +241,9 @@ function throwBall() {
     });
 
     sphereIdx = (sphereIdx + 1) % spheres.length;
+
+    currentAmmo--;
+    updateAmmoUI();
 
 }
 
@@ -911,4 +938,31 @@ function getValidSpawnPosition() {
     }
 
     return position;
+}
+
+
+function updateAmmoUI() {
+    document.getElementById("ammo").innerText = `🔫 Balas: ${currentAmmo} / ${maxAmmo}`;
+}
+
+function reload() {
+
+    if (isReloading) return;
+    if (currentAmmo === maxAmmo) return;
+
+    isReloading = true;
+
+    console.log("🔄 Recargando...");
+
+    setTimeout(() => {
+
+        currentAmmo = maxAmmo;
+        isReloading = false;
+
+        updateAmmoUI();
+
+        console.log("✅ Recargado");
+
+    }, 1500); // tiempo de recarga (1.5s)
+
 }

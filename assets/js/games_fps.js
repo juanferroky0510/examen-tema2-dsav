@@ -34,7 +34,7 @@ let zombieDead = false;
 
 const bullets = [];
 
-let playerLives = 10;
+let playerLives = 5;
 let gameOver = false;
 
 // para evitar daño continuo instantáneo
